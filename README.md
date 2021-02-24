@@ -2,7 +2,7 @@
 實作kaggle - Dogs vs. Cats: 
 https://www.kaggle.com/c/dogs-vs-cats/code?competitionId=3362&amp;sortBy=dateRun&amp;tab=profile
 
-```
+```python
 from tensorflow.python.client import device_lib
 print(device_lib.list_local_devices())
 ```
@@ -12,7 +12,7 @@ print(device_lib.list_local_devices())
     memory_limit: 268435456
     locality {
     }
-    incarnation: 2506412033217337929
+    incarnation: 7564468955766629336
     , name: "/device:GPU:0"
     device_type: "GPU"
     memory_limit: 15701340352
@@ -21,13 +21,13 @@ print(device_lib.list_local_devices())
       links {
       }
     }
-    incarnation: 2709907321652631463
+    incarnation: 1697848382704529566
     physical_device_desc: "device: 0, name: Tesla P100-PCIE-16GB, pci bus id: 0000:00:04.0, compute capability: 6.0"
     ]
     
 
 
-```
+```python
 # all import
 import json
 import zipfile
@@ -37,17 +37,18 @@ from matplotlib import pyplot as plt
 from matplotlib.image import imread
 import pandas as pd
 from sklearn.model_selection import train_test_split
-from keras.preprocessing.image import ImageDataGenerator
+from keras.preprocessing.image import ImageDataGenerator, img_to_array, load_img
 from tensorflow import keras
 from keras.models import Sequential
 from keras.layers import Dense, Dropout, Conv2D, MaxPool2D, Flatten, BatchNormalization, Activation
-
+from keras.callbacks import EarlyStopping, ReduceLROnPlateau
+import tensorflow as tf
 ```
 
 
-```
+```python
 # https://blog.toright.com/posts/6817/%E5%A6%82%E4%BD%95%E5%9C%A8-colab-%E4%B8%AD%E9%80%8F%E9%81%8E-kaggle-api-%E4%B8%8B%E8%BC%89%E8%B3%87%E6%96%99%E9%9B%86.html
-api_token = {"username":"***","key":"***"}
+api_token = {"username":"tmum610109006","key":"37f40156c53fc2f1d990be6a1944af18"}
 if not os.path.exists("/root/.kaggle"):
     os.makedirs("/root/.kaggle")
  
@@ -65,19 +66,19 @@ os.chdir('/kaggle')
 
     Warning: Looks like you're using an outdated API Version, please consider updating (server 1.5.10 / client 1.5.4)
     Downloading test1.zip to /kaggle
-     97% 264M/271M [00:05<00:00, 75.0MB/s]
-    100% 271M/271M [00:05<00:00, 55.5MB/s]
+     95% 257M/271M [00:01<00:00, 246MB/s]
+    100% 271M/271M [00:01<00:00, 255MB/s]
     Downloading train.zip to /kaggle
-     99% 539M/543M [00:09<00:00, 38.9MB/s]
-    100% 543M/543M [00:09<00:00, 62.0MB/s]
+     98% 531M/543M [00:02<00:00, 236MB/s]
+    100% 543M/543M [00:02<00:00, 222MB/s]
     Downloading sampleSubmission.csv to /kaggle
       0% 0.00/86.8k [00:00<?, ?B/s]
-    100% 86.8k/86.8k [00:00<00:00, 75.5MB/s]
+    100% 86.8k/86.8k [00:00<00:00, 77.9MB/s]
     sampleSubmission.csv  test1.zip  train.zip
     
 
 
-```
+```python
 def zip_list(file_path):
     zf = zipfile.ZipFile(file_path, 'r')
     zf.extractall()
@@ -96,21 +97,21 @@ if __name__ == '__main__':
     
 
 
-```
+```python
 # https://stackoverflow.com/questions/52265978/how-to-delete-a-locally-uploaded-file-on-google-colab
 %rm -rf /kaggle/test1.zip
 %rm -rf /kaggle/train.zip
 ```
 
 
-```
+```python
 test_images_dir = "../kaggle/test1/"
 train_images_dir= "../kaggle/train/"
 sample_sub_path = "../kaggle/sampleSubmission.csv"
 ```
 
 
-```
+```python
 for i in range(1,3):
   plt.subplot(1,2,i)
   if i % 2 == 1:   
@@ -128,7 +129,7 @@ plt.show()
 
 
 
-```
+```python
 submit_example = pd.read_csv(sample_sub_path)
 submit_example.head()
 ```
@@ -191,7 +192,7 @@ submit_example.head()
 
 
 
-```
+```python
 # 參考: https://machinelearningmastery.com/how-to-develop-a-convolutional-neural-network-to-classify-photos-of-dogs-and-cats/
 # train
 imagedir = os.listdir(train_images_dir)
@@ -214,28 +215,28 @@ test_df = pd.DataFrame({'file':test_images_path})
 print(test_df.head())
 ```
 
-                file label
-    0  dog.10680.jpg   dog
-    1   dog.9535.jpg   dog
-    2   cat.5840.jpg   cat
-    3   dog.9443.jpg   dog
-    4  dog.10890.jpg   dog
+               file label
+    0  dog.8911.jpg   dog
+    1  dog.2041.jpg   dog
+    2  dog.3159.jpg   dog
+    3  cat.5291.jpg   cat
+    4  cat.2948.jpg   cat
                     file label
-    24995   cat.3753.jpg   cat
-    24996   cat.2354.jpg   cat
-    24997  cat.11291.jpg   cat
-    24998    cat.882.jpg   cat
-    24999   dog.8025.jpg   dog
-           file
-    0  7255.jpg
-    1  7113.jpg
-    2  8581.jpg
-    3  1383.jpg
-    4  2914.jpg
+    24995   cat.1128.jpg   cat
+    24996  cat.11848.jpg   cat
+    24997   cat.7102.jpg   cat
+    24998   cat.9005.jpg   cat
+    24999  dog.10361.jpg   dog
+            file
+    0  10786.jpg
+    1   2273.jpg
+    2   1278.jpg
+    3   7563.jpg
+    4   4056.jpg
     
 
 
-```
+```python
 # 制作DataFrame的直方图
 df['label'].hist()
 ```
@@ -243,7 +244,7 @@ df['label'].hist()
 
 
 
-    <matplotlib.axes._subplots.AxesSubplot at 0x7fbd5dd46e48>
+    <matplotlib.axes._subplots.AxesSubplot at 0x7f4dd0235ed0>
 
 
 
@@ -252,7 +253,7 @@ df['label'].hist()
 
 
 
-```
+```python
 img_path = train_images_dir + df['file'][0]
 label = df['label'][0]
 
@@ -275,7 +276,7 @@ plt.title("Class:"+label)
 
 
 
-```
+```python
 df.shape
 ```
 
@@ -287,7 +288,7 @@ df.shape
 
 
 
-```
+```python
 train_df, valid_df = train_test_split(df, test_size = 0.15)
 print("Training set:", train_df.shape)
 print("Validation set:", valid_df.shape)
@@ -334,7 +335,7 @@ datagen = ImageDataGenerator(
 from: https://www.itread01.com/content/1546542668.html
 
 
-```
+```python
 # https://www.itread01.com/content/1546542668.html
 train_gen = ImageDataGenerator(rescale = 1.0/255.0,
                 horizontal_flip = True,
@@ -383,7 +384,7 @@ test_gen = test_gen.flow_from_dataframe(test_df,
     
 
 
-```
+```python
 def showImage(image_gen):
   for x_gens, y_gens in image_gen:
     print(x_gens.shape)
@@ -414,9 +415,9 @@ showImage(train_gen)
 
 
 
-```
+```python
 model = Sequential()
-model.add(Conv2D(filters=32, kernel_size=3, input_shape=x_gen_shape, padding='same'))
+model.add(Conv2D(filters=32, kernel_size=3, input_shape=(128, 128, 3), padding='same'))
 model.add(BatchNormalization())
 model.add(Activation('relu'))
 model.add(MaxPool2D(pool_size=2))
@@ -443,51 +444,51 @@ model.add(Dense(2, activation='softmax'))
 model.summary()
 ```
 
-    Model: "sequential_3"
+    Model: "sequential"
     _________________________________________________________________
     Layer (type)                 Output Shape              Param #   
     =================================================================
-    conv2d_9 (Conv2D)            (None, 128, 128, 32)      896       
+    conv2d (Conv2D)              (None, 128, 128, 32)      896       
     _________________________________________________________________
-    batch_normalization_12 (Batc (None, 128, 128, 32)      128       
+    batch_normalization (BatchNo (None, 128, 128, 32)      128       
     _________________________________________________________________
-    activation_12 (Activation)   (None, 128, 128, 32)      0         
+    activation (Activation)      (None, 128, 128, 32)      0         
     _________________________________________________________________
-    max_pooling2d_9 (MaxPooling2 (None, 64, 64, 32)        0         
+    max_pooling2d (MaxPooling2D) (None, 64, 64, 32)        0         
     _________________________________________________________________
-    dropout_12 (Dropout)         (None, 64, 64, 32)        0         
+    dropout (Dropout)            (None, 64, 64, 32)        0         
     _________________________________________________________________
-    conv2d_10 (Conv2D)           (None, 64, 64, 64)        18496     
+    conv2d_1 (Conv2D)            (None, 64, 64, 64)        18496     
     _________________________________________________________________
-    batch_normalization_13 (Batc (None, 64, 64, 64)        256       
+    batch_normalization_1 (Batch (None, 64, 64, 64)        256       
     _________________________________________________________________
-    activation_13 (Activation)   (None, 64, 64, 64)        0         
+    activation_1 (Activation)    (None, 64, 64, 64)        0         
     _________________________________________________________________
-    max_pooling2d_10 (MaxPooling (None, 32, 32, 64)        0         
+    max_pooling2d_1 (MaxPooling2 (None, 32, 32, 64)        0         
     _________________________________________________________________
-    dropout_13 (Dropout)         (None, 32, 32, 64)        0         
+    dropout_1 (Dropout)          (None, 32, 32, 64)        0         
     _________________________________________________________________
-    conv2d_11 (Conv2D)           (None, 32, 32, 128)       73856     
+    conv2d_2 (Conv2D)            (None, 32, 32, 128)       73856     
     _________________________________________________________________
-    batch_normalization_14 (Batc (None, 32, 32, 128)       512       
+    batch_normalization_2 (Batch (None, 32, 32, 128)       512       
     _________________________________________________________________
-    activation_14 (Activation)   (None, 32, 32, 128)       0         
+    activation_2 (Activation)    (None, 32, 32, 128)       0         
     _________________________________________________________________
-    max_pooling2d_11 (MaxPooling (None, 16, 16, 128)       0         
+    max_pooling2d_2 (MaxPooling2 (None, 16, 16, 128)       0         
     _________________________________________________________________
-    dropout_14 (Dropout)         (None, 16, 16, 128)       0         
+    dropout_2 (Dropout)          (None, 16, 16, 128)       0         
     _________________________________________________________________
-    flatten_3 (Flatten)          (None, 32768)             0         
+    flatten (Flatten)            (None, 32768)             0         
     _________________________________________________________________
-    dense_6 (Dense)              (None, 512)               16777728  
+    dense (Dense)                (None, 512)               16777728  
     _________________________________________________________________
-    batch_normalization_15 (Batc (None, 512)               2048      
+    batch_normalization_3 (Batch (None, 512)               2048      
     _________________________________________________________________
-    activation_15 (Activation)   (None, 512)               0         
+    activation_3 (Activation)    (None, 512)               0         
     _________________________________________________________________
-    dropout_15 (Dropout)         (None, 512)               0         
+    dropout_3 (Dropout)          (None, 512)               0         
     _________________________________________________________________
-    dense_7 (Dense)              (None, 2)                 1026      
+    dense_1 (Dense)              (None, 2)                 1026      
     =================================================================
     Total params: 16,874,946
     Trainable params: 16,873,474
@@ -496,12 +497,24 @@ model.summary()
     
 
 
-```
+```python
 model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
 ```
 
 
+```python
+# To stop the training after N epochs and val_loss value not decreased
+earlystop = EarlyStopping(patience=2)
+# To reduce the learning rate when the accuracy not increase for 5 steps
+learning_rate_reduction = ReduceLROnPlateau(monitor='val_accuracy', 
+                      patience=2, 
+                      verbose=1, 
+                      factor=0.5, 
+                      min_lr=0.0001)
 ```
+
+
+```python
 epochs = 30
 history = model.fit(train_gen, 
           # steps_per_epoch = len(train_df)//32, 
@@ -512,65 +525,65 @@ history = model.fit(train_gen,
 ```
 
     Epoch 1/30
-    665/665 [==============================] - 145s 217ms/step - loss: 0.8008 - accuracy: 0.5688 - val_loss: 0.6218 - val_accuracy: 0.6421
+    665/665 [==============================] - 163s 235ms/step - loss: 0.7911 - accuracy: 0.5741 - val_loss: 0.8577 - val_accuracy: 0.5363
     Epoch 2/30
-    665/665 [==============================] - 143s 214ms/step - loss: 0.6402 - accuracy: 0.6337 - val_loss: 0.6435 - val_accuracy: 0.6453
+    665/665 [==============================] - 154s 232ms/step - loss: 0.6421 - accuracy: 0.6428 - val_loss: 0.6713 - val_accuracy: 0.6304
     Epoch 3/30
-    665/665 [==============================] - 139s 210ms/step - loss: 0.6076 - accuracy: 0.6667 - val_loss: 0.5814 - val_accuracy: 0.6915
+    665/665 [==============================] - 153s 231ms/step - loss: 0.5955 - accuracy: 0.6797 - val_loss: 0.6313 - val_accuracy: 0.6928
     Epoch 4/30
-    665/665 [==============================] - 139s 208ms/step - loss: 0.5969 - accuracy: 0.6756 - val_loss: 0.6072 - val_accuracy: 0.6891
+    665/665 [==============================] - 153s 230ms/step - loss: 0.5717 - accuracy: 0.6966 - val_loss: 0.5129 - val_accuracy: 0.7480
     Epoch 5/30
-    665/665 [==============================] - 138s 207ms/step - loss: 0.5607 - accuracy: 0.7105 - val_loss: 0.5084 - val_accuracy: 0.7499
+    665/665 [==============================] - 153s 230ms/step - loss: 0.5509 - accuracy: 0.7164 - val_loss: 0.6982 - val_accuracy: 0.6475
     Epoch 6/30
-    665/665 [==============================] - 137s 205ms/step - loss: 0.5446 - accuracy: 0.7212 - val_loss: 0.6807 - val_accuracy: 0.6672
+    665/665 [==============================] - 154s 231ms/step - loss: 0.5268 - accuracy: 0.7321 - val_loss: 0.5944 - val_accuracy: 0.6968
     Epoch 7/30
-    665/665 [==============================] - 136s 204ms/step - loss: 0.5349 - accuracy: 0.7261 - val_loss: 0.7159 - val_accuracy: 0.6395
+    665/665 [==============================] - 153s 230ms/step - loss: 0.5236 - accuracy: 0.7376 - val_loss: 0.6016 - val_accuracy: 0.7317
     Epoch 8/30
-    665/665 [==============================] - 135s 203ms/step - loss: 0.5268 - accuracy: 0.7401 - val_loss: 0.5177 - val_accuracy: 0.7472
+    665/665 [==============================] - 154s 232ms/step - loss: 0.5027 - accuracy: 0.7526 - val_loss: 0.6041 - val_accuracy: 0.7155
     Epoch 9/30
-    665/665 [==============================] - 134s 202ms/step - loss: 0.5126 - accuracy: 0.7464 - val_loss: 0.5474 - val_accuracy: 0.7243
+    665/665 [==============================] - 153s 230ms/step - loss: 0.4903 - accuracy: 0.7664 - val_loss: 0.4535 - val_accuracy: 0.7912
     Epoch 10/30
-    665/665 [==============================] - 135s 203ms/step - loss: 0.5121 - accuracy: 0.7492 - val_loss: 0.5326 - val_accuracy: 0.7445
+    665/665 [==============================] - 154s 231ms/step - loss: 0.4837 - accuracy: 0.7699 - val_loss: 0.4726 - val_accuracy: 0.7731
     Epoch 11/30
-    665/665 [==============================] - 135s 202ms/step - loss: 0.5094 - accuracy: 0.7472 - val_loss: 0.5800 - val_accuracy: 0.7232
+    665/665 [==============================] - 152s 229ms/step - loss: 0.4702 - accuracy: 0.7773 - val_loss: 0.5045 - val_accuracy: 0.7632
     Epoch 12/30
-    665/665 [==============================] - 135s 203ms/step - loss: 0.5148 - accuracy: 0.7416 - val_loss: 0.6169 - val_accuracy: 0.7112
+    665/665 [==============================] - 153s 231ms/step - loss: 0.4642 - accuracy: 0.7851 - val_loss: 0.4867 - val_accuracy: 0.7789
     Epoch 13/30
-    665/665 [==============================] - 137s 206ms/step - loss: 0.5363 - accuracy: 0.7279 - val_loss: 0.6021 - val_accuracy: 0.7307
+    665/665 [==============================] - 155s 233ms/step - loss: 0.4620 - accuracy: 0.7774 - val_loss: 0.4597 - val_accuracy: 0.7789
     Epoch 14/30
-    665/665 [==============================] - 134s 202ms/step - loss: 0.5078 - accuracy: 0.7551 - val_loss: 0.5090 - val_accuracy: 0.7573
+    665/665 [==============================] - 154s 231ms/step - loss: 0.4812 - accuracy: 0.7723 - val_loss: 0.4291 - val_accuracy: 0.8043
     Epoch 15/30
-    665/665 [==============================] - 135s 202ms/step - loss: 0.4828 - accuracy: 0.7681 - val_loss: 0.4398 - val_accuracy: 0.7981
+    665/665 [==============================] - 153s 231ms/step - loss: 0.4427 - accuracy: 0.7931 - val_loss: 0.4873 - val_accuracy: 0.7792
     Epoch 16/30
-    665/665 [==============================] - 134s 202ms/step - loss: 0.4784 - accuracy: 0.7757 - val_loss: 0.4330 - val_accuracy: 0.8037
+    665/665 [==============================] - 152s 229ms/step - loss: 0.4384 - accuracy: 0.7992 - val_loss: 0.4781 - val_accuracy: 0.7971
     Epoch 17/30
-    665/665 [==============================] - 135s 203ms/step - loss: 0.4708 - accuracy: 0.7765 - val_loss: 0.4468 - val_accuracy: 0.7984
+    665/665 [==============================] - 155s 233ms/step - loss: 0.4237 - accuracy: 0.8101 - val_loss: 0.3965 - val_accuracy: 0.8200
     Epoch 18/30
-    665/665 [==============================] - 135s 204ms/step - loss: 0.4503 - accuracy: 0.7869 - val_loss: 0.4481 - val_accuracy: 0.7987
+    665/665 [==============================] - 154s 232ms/step - loss: 0.4501 - accuracy: 0.7906 - val_loss: 0.4431 - val_accuracy: 0.8008
     Epoch 19/30
-    665/665 [==============================] - 135s 203ms/step - loss: 0.4476 - accuracy: 0.7875 - val_loss: 0.5904 - val_accuracy: 0.7397
+    665/665 [==============================] - 151s 227ms/step - loss: 0.4434 - accuracy: 0.7907 - val_loss: 0.4737 - val_accuracy: 0.7816
     Epoch 20/30
-    665/665 [==============================] - 135s 203ms/step - loss: 0.4456 - accuracy: 0.7922 - val_loss: 0.4859 - val_accuracy: 0.7749
+    665/665 [==============================] - 153s 229ms/step - loss: 0.4217 - accuracy: 0.8049 - val_loss: 0.4413 - val_accuracy: 0.8192
     Epoch 21/30
-    665/665 [==============================] - 133s 201ms/step - loss: 0.4327 - accuracy: 0.8011 - val_loss: 0.4880 - val_accuracy: 0.7757
+    665/665 [==============================] - 153s 230ms/step - loss: 0.3954 - accuracy: 0.8220 - val_loss: 0.3731 - val_accuracy: 0.8320
     Epoch 22/30
-    665/665 [==============================] - 133s 200ms/step - loss: 0.4272 - accuracy: 0.8045 - val_loss: 0.6058 - val_accuracy: 0.7232
+    665/665 [==============================] - 150s 225ms/step - loss: 0.3981 - accuracy: 0.8203 - val_loss: 0.4398 - val_accuracy: 0.7965
     Epoch 23/30
-    665/665 [==============================] - 133s 200ms/step - loss: 0.4195 - accuracy: 0.8044 - val_loss: 0.3913 - val_accuracy: 0.8224
+    665/665 [==============================] - 152s 229ms/step - loss: 0.3893 - accuracy: 0.8269 - val_loss: 0.4924 - val_accuracy: 0.7763
     Epoch 24/30
-    665/665 [==============================] - 133s 200ms/step - loss: 0.4047 - accuracy: 0.8168 - val_loss: 0.3984 - val_accuracy: 0.8237
+    665/665 [==============================] - 149s 225ms/step - loss: 0.3788 - accuracy: 0.8314 - val_loss: 0.3595 - val_accuracy: 0.8387
     Epoch 25/30
-    665/665 [==============================] - 133s 200ms/step - loss: 0.4198 - accuracy: 0.8059 - val_loss: 0.5294 - val_accuracy: 0.7584
+    665/665 [==============================] - 151s 227ms/step - loss: 0.3708 - accuracy: 0.8331 - val_loss: 0.4414 - val_accuracy: 0.8021
     Epoch 26/30
-    665/665 [==============================] - 132s 199ms/step - loss: 0.3993 - accuracy: 0.8210 - val_loss: 0.4622 - val_accuracy: 0.7829
+    665/665 [==============================] - 149s 224ms/step - loss: 0.3750 - accuracy: 0.8369 - val_loss: 0.3867 - val_accuracy: 0.8144
     Epoch 27/30
-    665/665 [==============================] - 132s 199ms/step - loss: 0.3868 - accuracy: 0.8275 - val_loss: 0.5553 - val_accuracy: 0.7744
+    665/665 [==============================] - 150s 226ms/step - loss: 0.3703 - accuracy: 0.8357 - val_loss: 0.4968 - val_accuracy: 0.7755
     Epoch 28/30
-    665/665 [==============================] - 132s 199ms/step - loss: 0.3865 - accuracy: 0.8224 - val_loss: 0.4369 - val_accuracy: 0.7957
+    665/665 [==============================] - 150s 226ms/step - loss: 0.3708 - accuracy: 0.8348 - val_loss: 0.3460 - val_accuracy: 0.8515
     Epoch 29/30
-    665/665 [==============================] - 132s 198ms/step - loss: 0.3835 - accuracy: 0.8284 - val_loss: 0.3626 - val_accuracy: 0.8347
+    665/665 [==============================] - 151s 227ms/step - loss: 0.3605 - accuracy: 0.8376 - val_loss: 0.3296 - val_accuracy: 0.8613
     Epoch 30/30
-    665/665 [==============================] - 133s 199ms/step - loss: 0.3773 - accuracy: 0.8334 - val_loss: 0.3515 - val_accuracy: 0.8533
+    665/665 [==============================] - 154s 231ms/step - loss: 0.3606 - accuracy: 0.8392 - val_loss: 0.3782 - val_accuracy: 0.8341
     
 
 ###  EarlyStopping
@@ -607,24 +620,24 @@ learning_rate_reduction = ReduceLROnPlateau(monitor='val_acc',
 
 
 
-```
+```python
 model.save_weights('../kaggle/weights/weights_cat_dog.h5')
 ```
 
 
-```
+```python
 print(history.history.keys())
 print("Acc:", history.history['accuracy'][-1])
 print("Val Acc:", history.history['val_accuracy'][-1])
 ```
 
     dict_keys(['loss', 'accuracy', 'val_loss', 'val_accuracy'])
-    Acc: 0.824470579624176
-    Val Acc: 0.8533333539962769
+    Acc: 0.8409411907196045
+    Val Acc: 0.8341333270072937
     
 
 
-```
+```python
 def show_train_history(train_history, train, validation, title):  
     plt.plot(train_history.history[train])  
     plt.plot(train_history.history[validation])  
@@ -638,15 +651,15 @@ show_train_history(history, 'loss', 'val_loss', 'Loss History')
 ```
 
 
-![png](output_22_0.png)
+![png](output_23_0.png)
 
 
 
-![png](output_22_1.png)
+![png](output_23_1.png)
 
 
 
-```
+```python
 def num2cat(num):
   if num == 0:
     return 'cat'
@@ -657,9 +670,9 @@ predictions = model.predict(test_gen)
 predictions = np.argmax(predictions,axis=1)
 
 
-for i, file in enumerate(test_df['file'][:8]):
+for i, file in enumerate(test_df['file'][:12]):
   img = imread(test_images_dir+file)  
-  plt.subplot(2,4, i+1)
+  plt.subplot(3,4, i+1)
   plt.imshow(img)
   plt.title(f"Class:{num2cat(predictions[i])}")
   plt.axis('off')
@@ -669,11 +682,228 @@ plt.show()
 ```
 
 
-![png](output_23_0.png)
+![png](output_24_0.png)
 
 
 
+```python
+# Iterate thru all the layers of the model
+# https://towardsdatascience.com/convolutional-neural-network-feature-map-and-filter-visualization-f75012a5a49c
+for layer in model.layers:
+  if 'conv' in layer.name:
+      weights, bias= layer.get_weights()
+      print(layer.name)
+      
+      #normalize filter values between  0 and 1 for visualization
+      f_min, f_max = weights.min(), weights.max()
+      # print(f_max, f_min)
+      filters = (weights - f_min) / (f_max - f_min)  
+      print(filters.shape[3])
+      filter_cnt=1
+      
+      #plotting all the filters
+      for i in range(filters.shape[3]):
+          #get the filters
+          filt=filters[:,:,:, i]
+          #plotting each of the channel, color image RGB channels
+          for j in range(filters.shape[0]):
+            ax= plt.subplot(filters.shape[3]/2, filters.shape[0]*2, filter_cnt)
+            ax.set_xticks([])
+            ax.set_yticks([])
+            plt.imshow(filt[:,:, j])
+            filter_cnt+=1
+      plt.show()
 ```
 
+    conv2d
+    32
+    
+
+
+![png](output_25_1.png)
+
+
+    conv2d_1
+    64
+    
+
+
+![png](output_25_3.png)
+
+
+    conv2d_2
+    128
+    
+
+
+![png](output_25_5.png)
+
+
+#### Visualizing Feature maps or Activation maps generated in a CNN
+
+Visualizing Feature maps步驟:
+
+1. 定義一個新模型visualization_model，輸入為image，輸出將是feature map (為第一層之後的所有層的中間表示(intermediate representation))，這是基於我們用於訓練的模型。
+2. 載入要visualize的input image，以了解突出顯示哪些特徵以對圖像進行分類。
+3. 將圖像轉換為NumPy array
+4. rescaling (作Normalize)
+5. 通過可視化模型運行輸入圖像以獲取所有圖像輸入圖像的中間表示。
+6. 為所有convolutional layers 和 the max pool layers (不包含fully connected layer)繪製feature map
+
+
+
+```python
+img_path = test_images_dir + '2.jpg' 
+image = imread(img_path)
+plt.imshow(image)
 ```
 
+
+
+
+    <matplotlib.image.AxesImage at 0x7f4d427fe390>
+
+
+
+
+![png](output_27_1.png)
+
+
+
+```python
+# Define a new Model
+# Input= image 
+# Output= intermediate representations for all layers in the previous model after the first.
+successive_outputs = [layer.output for layer in model.layers[1:]]
+
+#visualization_model = Model(img_input, successive_outputs)
+visualization_model = tf.keras.models.Model(inputs = model.input, outputs = successive_outputs)
+
+img = load_img(img_path, target_size=(128, 128))
+
+x = img_to_array(img)                           
+x = x.reshape((1,) + x.shape)
+x /= 255.0
+
+# Let's run input image through our vislauization network
+# to obtain all intermediate representations for the image.
+successive_feature_maps = visualization_model.predict(x)
+# Retrieve are the names of the layers, so can have them as part of our plot
+layer_names = [layer.name for layer in model.layers]
+for layer_name, feature_map in zip(layer_names, successive_feature_maps):
+  print(feature_map.shape)
+  if len(feature_map.shape) == 4:
+    
+    # Plot Feature maps for the conv / maxpool layers, not the fully-connected layers
+
+    n_features = feature_map.shape[-1]  # number of features in the feature map
+    size = feature_map.shape[1]  # feature map shape (1, size, size, n_features)
+    
+    # We will tile our images in this matrix
+    display_grid = np.zeros((size, size * n_features))
+    
+    # Postprocess the feature to be visually palatable
+    for i in range(n_features):
+      x  = feature_map[0, :, :, i]
+      x -= x.mean()
+      x /= x.std()
+      x *= 64
+      x += 128
+      x = np.clip(x, 0, 255).astype('uint8')
+      # Tile each filter into a horizontal grid
+      display_grid[:, i * size : (i + 1) * size] = x
+
+
+    scale = 20. / n_features
+    plt.figure(figsize=(scale * n_features, scale))
+    plt.title(layer_name)
+    plt.grid (False)
+    plt.imshow(display_grid, aspect='auto', cmap='viridis')
+```
+
+    WARNING:tensorflow:5 out of the last 786 calls to <function Model.make_predict_function.<locals>.predict_function at 0x7f4d42740e60> triggered tf.function retracing. Tracing is expensive and the excessive number of tracings could be due to (1) creating @tf.function repeatedly in a loop, (2) passing tensors with different shapes, (3) passing Python objects instead of tensors. For (1), please define your @tf.function outside of the loop. For (2), @tf.function has experimental_relax_shapes=True option that relaxes argument shapes that can avoid unnecessary retracing. For (3), please refer to https://www.tensorflow.org/guide/function#controlling_retracing and https://www.tensorflow.org/api_docs/python/tf/function for  more details.
+    (1, 128, 128, 32)
+    (1, 128, 128, 32)
+    (1, 64, 64, 32)
+    (1, 64, 64, 32)
+    (1, 64, 64, 64)
+    (1, 64, 64, 64)
+    (1, 64, 64, 64)
+    (1, 32, 32, 64)
+    (1, 32, 32, 64)
+    (1, 32, 32, 128)
+    (1, 32, 32, 128)
+    (1, 32, 32, 128)
+    (1, 16, 16, 128)
+    (1, 16, 16, 128)
+    (1, 32768)
+    (1, 512)
+    (1, 512)
+    (1, 512)
+    (1, 512)
+    (1, 2)
+    
+
+    /usr/local/lib/python3.7/dist-packages/ipykernel_launcher.py:36: RuntimeWarning: invalid value encountered in true_divide
+    
+
+
+![png](output_28_2.png)
+
+
+
+![png](output_28_3.png)
+
+
+
+![png](output_28_4.png)
+
+
+
+![png](output_28_5.png)
+
+
+
+![png](output_28_6.png)
+
+
+
+![png](output_28_7.png)
+
+
+
+![png](output_28_8.png)
+
+
+
+![png](output_28_9.png)
+
+
+
+![png](output_28_10.png)
+
+
+
+![png](output_28_11.png)
+
+
+
+![png](output_28_12.png)
+
+
+
+![png](output_28_13.png)
+
+
+
+![png](output_28_14.png)
+
+
+
+![png](output_28_15.png)
+
+
+
+```python
+
+```
