@@ -524,67 +524,7 @@ history = model.fit(train_gen,
           )
 ```
 
-    Epoch 1/30
-    665/665 [==============================] - 163s 235ms/step - loss: 0.7911 - accuracy: 0.5741 - val_loss: 0.8577 - val_accuracy: 0.5363
-    Epoch 2/30
-    665/665 [==============================] - 154s 232ms/step - loss: 0.6421 - accuracy: 0.6428 - val_loss: 0.6713 - val_accuracy: 0.6304
-    Epoch 3/30
-    665/665 [==============================] - 153s 231ms/step - loss: 0.5955 - accuracy: 0.6797 - val_loss: 0.6313 - val_accuracy: 0.6928
-    Epoch 4/30
-    665/665 [==============================] - 153s 230ms/step - loss: 0.5717 - accuracy: 0.6966 - val_loss: 0.5129 - val_accuracy: 0.7480
-    Epoch 5/30
-    665/665 [==============================] - 153s 230ms/step - loss: 0.5509 - accuracy: 0.7164 - val_loss: 0.6982 - val_accuracy: 0.6475
-    Epoch 6/30
-    665/665 [==============================] - 154s 231ms/step - loss: 0.5268 - accuracy: 0.7321 - val_loss: 0.5944 - val_accuracy: 0.6968
-    Epoch 7/30
-    665/665 [==============================] - 153s 230ms/step - loss: 0.5236 - accuracy: 0.7376 - val_loss: 0.6016 - val_accuracy: 0.7317
-    Epoch 8/30
-    665/665 [==============================] - 154s 232ms/step - loss: 0.5027 - accuracy: 0.7526 - val_loss: 0.6041 - val_accuracy: 0.7155
-    Epoch 9/30
-    665/665 [==============================] - 153s 230ms/step - loss: 0.4903 - accuracy: 0.7664 - val_loss: 0.4535 - val_accuracy: 0.7912
-    Epoch 10/30
-    665/665 [==============================] - 154s 231ms/step - loss: 0.4837 - accuracy: 0.7699 - val_loss: 0.4726 - val_accuracy: 0.7731
-    Epoch 11/30
-    665/665 [==============================] - 152s 229ms/step - loss: 0.4702 - accuracy: 0.7773 - val_loss: 0.5045 - val_accuracy: 0.7632
-    Epoch 12/30
-    665/665 [==============================] - 153s 231ms/step - loss: 0.4642 - accuracy: 0.7851 - val_loss: 0.4867 - val_accuracy: 0.7789
-    Epoch 13/30
-    665/665 [==============================] - 155s 233ms/step - loss: 0.4620 - accuracy: 0.7774 - val_loss: 0.4597 - val_accuracy: 0.7789
-    Epoch 14/30
-    665/665 [==============================] - 154s 231ms/step - loss: 0.4812 - accuracy: 0.7723 - val_loss: 0.4291 - val_accuracy: 0.8043
-    Epoch 15/30
-    665/665 [==============================] - 153s 231ms/step - loss: 0.4427 - accuracy: 0.7931 - val_loss: 0.4873 - val_accuracy: 0.7792
-    Epoch 16/30
-    665/665 [==============================] - 152s 229ms/step - loss: 0.4384 - accuracy: 0.7992 - val_loss: 0.4781 - val_accuracy: 0.7971
-    Epoch 17/30
-    665/665 [==============================] - 155s 233ms/step - loss: 0.4237 - accuracy: 0.8101 - val_loss: 0.3965 - val_accuracy: 0.8200
-    Epoch 18/30
-    665/665 [==============================] - 154s 232ms/step - loss: 0.4501 - accuracy: 0.7906 - val_loss: 0.4431 - val_accuracy: 0.8008
-    Epoch 19/30
-    665/665 [==============================] - 151s 227ms/step - loss: 0.4434 - accuracy: 0.7907 - val_loss: 0.4737 - val_accuracy: 0.7816
-    Epoch 20/30
-    665/665 [==============================] - 153s 229ms/step - loss: 0.4217 - accuracy: 0.8049 - val_loss: 0.4413 - val_accuracy: 0.8192
-    Epoch 21/30
-    665/665 [==============================] - 153s 230ms/step - loss: 0.3954 - accuracy: 0.8220 - val_loss: 0.3731 - val_accuracy: 0.8320
-    Epoch 22/30
-    665/665 [==============================] - 150s 225ms/step - loss: 0.3981 - accuracy: 0.8203 - val_loss: 0.4398 - val_accuracy: 0.7965
-    Epoch 23/30
-    665/665 [==============================] - 152s 229ms/step - loss: 0.3893 - accuracy: 0.8269 - val_loss: 0.4924 - val_accuracy: 0.7763
-    Epoch 24/30
-    665/665 [==============================] - 149s 225ms/step - loss: 0.3788 - accuracy: 0.8314 - val_loss: 0.3595 - val_accuracy: 0.8387
-    Epoch 25/30
-    665/665 [==============================] - 151s 227ms/step - loss: 0.3708 - accuracy: 0.8331 - val_loss: 0.4414 - val_accuracy: 0.8021
-    Epoch 26/30
-    665/665 [==============================] - 149s 224ms/step - loss: 0.3750 - accuracy: 0.8369 - val_loss: 0.3867 - val_accuracy: 0.8144
-    Epoch 27/30
-    665/665 [==============================] - 150s 226ms/step - loss: 0.3703 - accuracy: 0.8357 - val_loss: 0.4968 - val_accuracy: 0.7755
-    Epoch 28/30
-    665/665 [==============================] - 150s 226ms/step - loss: 0.3708 - accuracy: 0.8348 - val_loss: 0.3460 - val_accuracy: 0.8515
-    Epoch 29/30
-    665/665 [==============================] - 151s 227ms/step - loss: 0.3605 - accuracy: 0.8376 - val_loss: 0.3296 - val_accuracy: 0.8613
-    Epoch 30/30
-    665/665 [==============================] - 154s 231ms/step - loss: 0.3606 - accuracy: 0.8392 - val_loss: 0.3782 - val_accuracy: 0.8341
-    
+  
 
 ###  EarlyStopping
 patience：能夠容忍多少個epoch內都沒有improvement
